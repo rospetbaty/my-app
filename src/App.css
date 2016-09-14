@@ -14,8 +14,19 @@
   height: 150px;
   padding: 20px;
   color: white;
+}
+
+ul{
+  padding: 12px;
+  font-size: 16px;
+  margin: 10px;
+  background-color: #0066FF;
+  color: #FFF;
+  border: 2px solid #0066FF;
+  list-style-position: inside;
 
 }
+
 
 h1{
   font-size: 10;

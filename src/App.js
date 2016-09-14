@@ -46,22 +46,38 @@ var TodoList = React.createClass({
 
       e.preventDefault();
     },
+  removeItem: function(e) {
+    var itemArray = this.state.items;
+
+      itemArray.pop();
+
+      this.setState({
+        items: itemArray
+      });
+
+      this._inputElement.value = "";
+
+      e.preventDefault();
+  },
   render: function() {
       return (
         <div className="todoListMain">
           <div className="header">
           <h1>App for the gifted ones!</h1>
-            <form onSubmit={this.addItem}>
+            <form>
             <input ref={(a) => this._inputElement = a}
                    placeholder="enter task">
             </input>
-              <button type="submit">add</button>
+              <button onClick={this.addItem}>add</button>
+              <button onClick={this.removeItem}>remove last</button>
             </form>
           </div>
           <TodoItems entries={this.state.items}/>
         </div>
       );
+
     }
+
 });
 
 
