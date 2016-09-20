@@ -9,7 +9,9 @@ var TodoItems = React.createClass({
     var todoEntries = this.props.entries;
 
    function createTasks(item) {
-     return <li key={item.key}>{item.text}</li>
+     return <li key={item.key} >{item.text}
+            <input type="checkBox" onClick={function(){item.checked = true}} />
+     </li>
    }
 
    var listItems = todoEntries.map(createTasks);
@@ -34,7 +36,8 @@ var TodoList = React.createClass({
       itemArray.push(
         {
           text: this._inputElement.value,
-          key: Date.now()
+          key: Date.now(),
+          checked: false
         }
       );
 
@@ -46,18 +49,28 @@ var TodoList = React.createClass({
 
       e.preventDefault();
     },
+
   removeItem: function(e) {
-    var itemArray = this.state.items;
+    var itemArray = this.state.items.filter(function (item) {
+      return !item.checked;
+    });
 
-      itemArray.pop();
+    this.setState({ items: itemArray });
 
-      this.setState({
-        items: itemArray
-      });
+    this._inputElement.value = "";
 
-      this._inputElement.value = "";
+    e.preventDefault();
+  },
+  editItem: function(e) {
+    var itemArray = this.state.items.filter(function (item) {
+      return !item.checked;
+    });
 
-      e.preventDefault();
+    this.setState({ items: itemArray });
+
+    this._inputElement.value = '<input type="textbox">';
+
+    e.preventDefault();
   },
   render: function() {
       return (
@@ -69,7 +82,7 @@ var TodoList = React.createClass({
                    placeholder="enter task">
             </input>
               <button onClick={this.addItem}>add</button>
-              <button onClick={this.removeItem}>remove last</button>
+              <button onClick={this.removeItem}>remove</button>
             </form>
           </div>
           <TodoItems entries={this.state.items}/>
