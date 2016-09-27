@@ -3,26 +3,31 @@ var ReactDOM = require ('react-dom');
 import logo from './logo.svg';
 import './App.css';
 
-var TodoItems = React.createClass({
-  render: function() {
+function TodoItem(props) {
+  return (
+    <li key={props.id}>
+      {props.editing ? (
+        <input type='text' value={props.text} onChange={props.onChange} />
+      ) : props.text}
 
-    var todoEntries = this.props.entries;
+      <input type='checkbox' onClick={props.onClick} />
+    </li>
+  )
+}
 
-   function createTasks(item) {
-     return <li key={item.key} >{item.text}
-            <input type="checkBox" onClick={function(){item.checked = true}} />
-     </li>
-   }
+let id = 0
 
-   var listItems = todoEntries.map(createTasks);
-   return (
-      <ul className="theList">
-        {listItems}
-      </ul>
-    );
-
-  }
-});
+function TodoItems(props) {
+ var listItems = props.entries
+ .map((item, i) => <TodoItem  {...item}
+  onClick={props.onSelectItem(i)}
+  onChange={props.onItemChange(i)}  />);
+ return (
+    <ul className="theList">
+      {listItems}
+    </ul>
+  );
+}
 
 var TodoList = React.createClass({
   getInitialState: function() {
@@ -33,11 +38,13 @@ var TodoList = React.createClass({
   addItem: function(e) {
     var itemArray = this.state.items;
 
+    id++
       itemArray.push(
         {
           text: this._inputElement.value,
           key: Date.now(),
-          checked: false
+          checked: false,
+          id: id
         }
       );
 
@@ -49,6 +56,32 @@ var TodoList = React.createClass({
 
       e.preventDefault();
     },
+
+  onSelectItem(idx) {
+    return () => {
+      this.setState({
+        items: this.state.items.map((item, i) => {
+          if (i === idx) {
+            item.checked = !item.checked
+          }
+          return item
+        })
+      })
+    }
+  },
+
+  onItemChange(idx) {
+    return e => {
+      this.setState({
+        items: this.state.items.map((item, i) => {
+          if (i === idx) {
+            item.text = e.target.value
+          }
+          return item
+        })
+      })
+    }
+  },
 
   removeItem: function(e) {
     var itemArray = this.state.items.filter(function (item) {
@@ -68,7 +101,7 @@ var TodoList = React.createClass({
 
     this.setState({ items: itemArray });
 
-    this._inputElement.value = '<input type="textbox">';
+    this._inputElement.value = 'heyhey';
 
     e.preventDefault();
   },
@@ -81,11 +114,14 @@ var TodoList = React.createClass({
             <input ref={(a) => this._inputElement = a}
                    placeholder="enter task">
             </input>
-              <button onClick={this.addItem}>add</button>
-              <button onClick={this.removeItem}>remove</button>
+              <button onClick={this.addItem}>Add</button>
+              <button onClick={this.removeItem}>Remove</button>
+              <button onClick={this.editItem}>Edit</button>
             </form>
           </div>
-          <TodoItems entries={this.state.items}/>
+          <TodoItems entries={this.state.items}
+          onSelectItem={this.onSelectItem}
+          onItemChange={this.onItemChange}/>
         </div>
       );
 
